@@ -15,6 +15,9 @@ public class JavaClientPlayer extends Player {
     public JavaClient getClient() {
         return javaClient;
     }
+    public String getGameID() {
+        return this.gameID;
+    }
 
 
     private void initiateGame() {
@@ -37,9 +40,11 @@ public class JavaClientPlayer extends Player {
 
     @Override
     public int[] makeMove(Stone[][] board) {
-        String moveQuery = String.format("play/?pid=%s&x=%d&y=%d", gameID, getLastMove()[0], getLastMove()[1]);
-        System.out.println("Sending move to server: " + moveQuery); // Debug statement
+        // Assuming the last move is made by this player
+        int[] lastMove = getLastMove();
+        String moveQuery = String.format("play/?pid=%s&x=%d&y=%d", gameID, lastMove[0], lastMove[1]);
         String response = javaClient.sendGet(moveQuery);
+
         return parseMove(response);
     }
 
@@ -49,11 +54,11 @@ public class JavaClientPlayer extends Player {
             JSONObject moveObject = jsonObject.getJSONObject("move");
             int x = moveObject.getInt("x");
             int y = moveObject.getInt("y");
-            System.out.println("Received move from server: [" + x + ", " + y + "]"); // Debug statement
             return new int[] {x, y};
         } else {
             String reason = jsonObject.optString("reason", "Unknown error");
-            throw new IllegalStateException("Failed to make a move: " + reason);
+            System.err.println("Failed to make a move: " + reason); // Logging error
+            return null; // Returning null to indicate an error
         }
     }
 
