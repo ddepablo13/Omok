@@ -5,12 +5,12 @@ import java.util.List;
  *  Represents a computer-controlled player, with methods for choosing
  * moves based on the game state
  */
-public class AIPlayer extends Player{
-    private final Board board;
+public class ComputerPlayer extends PlayerInterface {
+    private final ActualBoard actualBoard;
     private static final int MAX_DEPTH = 2;
     private final Stone stoneType;
-    private final Player me;
-    private final Player opponent;
+    private final PlayerInterface me;
+    private final PlayerInterface opponent;
     private int[]lastMove = {0, 0};
 
     /**
@@ -19,15 +19,15 @@ public class AIPlayer extends Player{
      * AI itself in the game, created as a HumanPlayer instance.
      *
      * @param stoneType    the type of stone that the AI player will use in the game.
-     * @param currentBoard the current state of the game board.
+     * @param currentActualBoard the current state of the game board.
      * @param opponent     the opponent player against whom the AI is playing.
      */
 
-    public AIPlayer(Stone stoneType, Board currentBoard, Player opponent) {
+    public ComputerPlayer(Stone stoneType, ActualBoard currentActualBoard, PlayerInterface opponent) {
         super("Computer", stoneType);
         this.stoneType = stoneType;
         this.opponent = opponent;
-        this.board = currentBoard;
+        this.actualBoard = currentActualBoard;
         this.me = new HumanPlayer(stoneType, "Computer");
     }
 
@@ -65,9 +65,9 @@ public class AIPlayer extends Player{
                 return new int[]{i, j};
             }
 
-            board.placeStone(i, j, me);
+            actualBoard.placeStone(i, j, me);
             int score = minimax(MAX_DEPTH, opponent, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            board.placeStone(i, j, null);
+            actualBoard.placeStone(i, j, null);
 
             if (score > bestScore) {
                 bestScore = score;
@@ -91,9 +91,9 @@ public class AIPlayer extends Player{
      */
 
     private int[] checkImmediateMoves() {
-        for (int i = 0; i < board.sizeBoard(); i++) {
-            for (int j = 0; j < board.sizeBoard(); j++) {
-                if (board.isEmpty(i, j)) {
+        for (int i = 0; i < actualBoard.sizeBoard(); i++) {
+            for (int j = 0; j < actualBoard.sizeBoard(); j++) {
+                if (actualBoard.isEmpty(i, j)) {
                     if (isWinningMove(i, j, me)) {
                         return new int[]{i, j};
                     }
@@ -118,7 +118,7 @@ public class AIPlayer extends Player{
      * @return        true if placing a stone at (x, y) for the specified player results in a win;
      *                false otherwise.
      */
-    private boolean isWinningMove(int x, int y, Player player) {
+    private boolean isWinningMove(int x, int y, PlayerInterface player) {
         return createsWinningOpportunity(x, y, 1, 0, player) ||  // Horizontal
                 createsWinningOpportunity(x, y, 0, 1, player) ||  // Vertical
                 createsWinningOpportunity(x, y, 1, 1, player) ||  // Diagonal (down-right)
@@ -137,9 +137,9 @@ public class AIPlayer extends Player{
 
     private List<int[]> getPossibleMoves() {
         List<int[]> moves = new ArrayList<>();
-        for (int i = 0; i < board.sizeBoard(); i++) {
-            for (int j = 0; j < board.sizeBoard(); j++) {
-                if (board.isEmpty(i, j) && isNearStone(i, j)) {
+        for (int i = 0; i < actualBoard.sizeBoard(); i++) {
+            for (int j = 0; j < actualBoard.sizeBoard(); j++) {
+                if (actualBoard.isEmpty(i, j) && isNearStone(i, j)) {
                     moves.add(new int[]{i, j});
                 }
             }
@@ -162,8 +162,8 @@ public class AIPlayer extends Player{
         int distance = 2;
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {
-                if (x + i >= 0 && x + i < board.sizeBoard() && y + j >= 0 && y + j < board.sizeBoard()) {
-                    if (!board.isEmpty(x + i, y + j)) {
+                if (x + i >= 0 && x + i < actualBoard.sizeBoard() && y + j >= 0 && y + j < actualBoard.sizeBoard()) {
+                    if (!actualBoard.isEmpty(x + i, y + j)) {
                         return true;
                     }
                 }
@@ -187,19 +187,19 @@ public class AIPlayer extends Player{
      *                favorable for the 'me' player and a low value for the 'opponent'.
      */
 
-    private int minimax(int depth, Player player, int alpha, int beta) {
-        if (depth == 0 || board.isFull() || board.isWonBy(opponent) || board.isWonBy(me)) {
+    private int minimax(int depth, PlayerInterface player, int alpha, int beta) {
+        if (depth == 0 || actualBoard.isFull() || actualBoard.isWonBy(opponent) || actualBoard.isWonBy(me)) {
             return evaluateBoard();
         }
 
         if (player.equals(me)) {
             int maxEval = Integer.MIN_VALUE;
-            for (int i = 0; i < board.sizeBoard(); i++) {
-                for (int j = 0; j < board.sizeBoard(); j++) {
-                    if (board.isEmpty(i, j)) {
-                        board.placeStone(i, j, me);
+            for (int i = 0; i < actualBoard.sizeBoard(); i++) {
+                for (int j = 0; j < actualBoard.sizeBoard(); j++) {
+                    if (actualBoard.isEmpty(i, j)) {
+                        actualBoard.placeStone(i, j, me);
                         int eval = minimax(depth - 1, opponent, alpha, beta);
-                        board.placeStone(i, j, null); // Undo the move
+                        actualBoard.placeStone(i, j, null); // Undo the move
                         maxEval = Math.max(maxEval, eval);
                         alpha = Math.max(alpha, eval);
                         if (beta <= alpha) {
@@ -214,12 +214,12 @@ public class AIPlayer extends Player{
             return maxEval;
         } else {
             int minEval = Integer.MAX_VALUE;
-            for (int i = 0; i < board.sizeBoard(); i++) {
-                for (int j = 0; j < board.sizeBoard(); j++) {
-                    if (board.isEmpty(i, j)) {
-                        board.placeStone(i, j, opponent);
+            for (int i = 0; i < actualBoard.sizeBoard(); i++) {
+                for (int j = 0; j < actualBoard.sizeBoard(); j++) {
+                    if (actualBoard.isEmpty(i, j)) {
+                        actualBoard.placeStone(i, j, opponent);
                         int eval = minimax(depth - 1, me, alpha, beta);
-                        board.placeStone(i, j, null);
+                        actualBoard.placeStone(i, j, null);
                         minEval = Math.min(minEval, eval);
                         beta = Math.min(beta, eval);
                         if (beta <= alpha) {
@@ -246,10 +246,10 @@ public class AIPlayer extends Player{
      */
     private int evaluateBoard() {
         int score = 0;
-        for (int i = 0; i < board.sizeBoard(); i++) {
-            for (int j = 0; j < board.sizeBoard(); j++) {
+        for (int i = 0; i < actualBoard.sizeBoard(); i++) {
+            for (int j = 0; j < actualBoard.sizeBoard(); j++) {
 
-                if (board.isEmpty(i, j)) {
+                if (actualBoard.isEmpty(i, j)) {
                     score += evaluatePosition(i, j);
                 }
             }
@@ -316,10 +316,10 @@ public class AIPlayer extends Player{
      * @return       true if placing a stone at (x, y) for the specified player in the given direction
      *               results in a winning opportunity; false otherwise.
      */
-    private boolean createsWinningOpportunity(int x, int y, int dx, int dy, Player player) {
-        board.placeStone(x, y, player);
+    private boolean createsWinningOpportunity(int x, int y, int dx, int dy, PlayerInterface player) {
+        actualBoard.placeStone(x, y, player);
         boolean wins = checkDirection(x, y, player, dx, dy);
-        board.placeStone(x, y, null);
+        actualBoard.placeStone(x, y, null);
         return wins;
     }
 
@@ -337,15 +337,15 @@ public class AIPlayer extends Player{
      * @return       the number of consecutive stones belonging to the specified player
      *               along the given direction from the starting position.
      */
-    private int countConsecutiveStones(int x, int y, int dx, int dy, Player player) {
+    private int countConsecutiveStones(int x, int y, int dx, int dy, PlayerInterface player) {
         int count = 0;
         for (int i = -1; i <= 4; i++) {
             int newX = x + dx * i;
             int newY = y + dy * i;
-            if (newX < 0 || newY < 0 || newX >= board.sizeBoard() || newY >= board.sizeBoard()) {
+            if (newX < 0 || newY < 0 || newX >= actualBoard.sizeBoard() || newY >= actualBoard.sizeBoard()) {
                 continue;
             }
-            if (board.playerAt(newX, newY) == player) {
+            if (actualBoard.playerAt(newX, newY) == player) {
                 count++;
             } else if (i != -1) {
                 count = 0;
@@ -390,14 +390,14 @@ public class AIPlayer extends Player{
      * @return       true if there are five consecutive stones of the specified player in the
      *               given direction; false otherwise.
      */
-    private boolean checkDirection(int x, int y, Player player, int dx, int dy) {
+    private boolean checkDirection(int x, int y, PlayerInterface player, int dx, int dy) {
         int count = 0;
         for (int i = -4; i <= 4; i++) {
             int newX = x + dx * i;
             int newY = y + dy * i;
 
-            if (newX >= 0 && newX < board.sizeBoard() && newY >= 0 && newY < board.sizeBoard()) {
-                Player current = board.getGrid()[newX][newY];
+            if (newX >= 0 && newX < actualBoard.sizeBoard() && newY >= 0 && newY < actualBoard.sizeBoard()) {
+                PlayerInterface current = actualBoard.getGrid()[newX][newY];
                 if (current != null && current.equals(player)) {
                     count++;
                     if (count == 5) {
@@ -424,9 +424,9 @@ public class AIPlayer extends Player{
     @Override
     public int[] makeMove(Stone[][] currentBoard) {
 
-        Board.Place bestMove = decideNextMove();
+        ActualBoard.Place bestMove = decideNextMove();
         if (bestMove != null) {
-            board.placeStone(bestMove.x, bestMove.y, this);
+            actualBoard.placeStone(bestMove.x, bestMove.y, this);
 
             return new int[]{bestMove.x, bestMove.y};
         }
@@ -441,12 +441,12 @@ public class AIPlayer extends Player{
      * @return a {@code Board.Place} object representing the coordinates of the next move (x, y).
      *         Returns null if there are no empty positions available on the board.
      */
-    private Board.Place decideNextMove() {
+    private ActualBoard.Place decideNextMove() {
 
-        for (int i = 0; i < board.sizeBoard(); i++) {
-            for (int j = 0; j < board.sizeBoard(); j++) {
-                if (board.isEmpty(i, j)) {
-                    return new Board.Place(i, j);
+        for (int i = 0; i < actualBoard.sizeBoard(); i++) {
+            for (int j = 0; j < actualBoard.sizeBoard(); j++) {
+                if (actualBoard.isEmpty(i, j)) {
+                    return new ActualBoard.Place(i, j);
                 }
             }
         }

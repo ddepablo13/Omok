@@ -1,6 +1,6 @@
 import org.json.JSONObject;
 
-public class JavaClientPlayer extends Player {
+public class JavaClientPlayer extends PlayerInterface {
 
     private JavaClient javaClient;
     private String gameID;

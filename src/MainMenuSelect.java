@@ -7,10 +7,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-/**
- * Creates the GUI where users can input their name, select modality, and initialize game.
- */
-public class SelectionMenu extends JPanel {
+public class MainMenuSelect extends JPanel {
 
     private JRadioButton humanButton;
     private JRadioButton computerButton;
@@ -20,24 +17,13 @@ public class SelectionMenu extends JPanel {
     private final BufferedImage backgroundImage;
     private final BufferedImage icon;
 
-    /**
-     * Sets a menu with desired sizes, sets icon and background Image
-     * @param sizeWidth size of the x-axis
-     * @param sizeHeight size of the y-axis
-     * @throws IOException if images ar not found
-     */
-    public SelectionMenu(int sizeWidth, int sizeHeight) throws IOException {
-        BufferedImage originalIcon = new ImageHandler("images/icon.png", 150, 150).getImage();
+    public MainMenuSelect(int sizeWidth, int sizeHeight) throws IOException {
+        BufferedImage originalIcon = new TakeImage("images/MainMenuPic.png", 150, 150).getImage();
         icon = createCircularImage(originalIcon);
 
-        backgroundImage = new ImageHandler("images/background.png", sizeWidth, sizeHeight).getImage();
+        backgroundImage = new TakeImage("images/CloudBackground.png", sizeWidth, sizeHeight).getImage();
         initializeUI();
     }
-
-    /**
-     * Draws the background image
-     * @param g Graphic components to be drawn
-     */
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -49,11 +35,6 @@ public class SelectionMenu extends JPanel {
         }
     }
 
-    /**
-     * Buffers the image to have a circular contour
-     * @param inputImage Image to be modified/buffered
-     * @return a buffered circular version of the input Image
-     */
     public BufferedImage createCircularImage(BufferedImage inputImage) {
         int diameter = Math.min(inputImage.getWidth(), inputImage.getHeight());
         BufferedImage circleBuffer = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
@@ -67,11 +48,6 @@ public class SelectionMenu extends JPanel {
         return circleBuffer;
     }
 
-    /**
-     * Sets events for when text field
-     * @param textField JTextField Object in which we will add focus listener
-     * @param defaultText default string which testField will display
-     */
     private void addFocusListenerToTextField(JTextField textField, String defaultText) {
         textField.addFocusListener(new FocusAdapter() {
             @Override
@@ -90,9 +66,6 @@ public class SelectionMenu extends JPanel {
         });
     }
 
-    /**
-     * Sets all the components necessary for the correct functionality of GUI
-     */
     private void initializeUI() {
         // Define a custom font
         Font customFont = new Font("DialogInput", Font.ROMAN_BASELINE, 14);
@@ -163,10 +136,6 @@ public class SelectionMenu extends JPanel {
     }
 
 
-    /**
-     * Sets action performed when play button is clicked, (Starting a game).
-     * @param e event of play button being clicked
-     */
     private void playButtonActionPerformed(ActionEvent e) {
         String playerName = playerNameField.getText().trim();
         String opponentName = opponentNameField.getText().trim();
@@ -180,8 +149,8 @@ public class SelectionMenu extends JPanel {
         }
 
         if (humanButton.isSelected() || computerButton.isSelected()) {
-            Player player1 = new HumanPlayer(Stone.BLACK, playerName);
-            Player player2 = new HumanPlayer(Stone.WHITE, opponentName);
+            PlayerInterface player1 = new HumanPlayer(Stone.BLACK, playerName);
+            PlayerInterface player2 = new HumanPlayer(Stone.WHITE, opponentName);
             startGame(player1, player2, isAI);
             Window topFrame = SwingUtilities.getWindowAncestor(this);
             if (topFrame != null) {
@@ -191,7 +160,7 @@ public class SelectionMenu extends JPanel {
         if (javaCbutton.isSelected()) {
             String strategy = selectJavaClientStrategy();
             if (strategy != null) {
-                Player player1 = new HumanPlayer(Stone.BLACK, playerName);
+                PlayerInterface player1 = new HumanPlayer(Stone.BLACK, playerName);
                 JavaClientPlayer javaClientPlayer = new JavaClientPlayer(Stone.WHITE, strategy); // Assuming this class exists
                 startGame(player1, javaClientPlayer, false);
             }
@@ -207,18 +176,13 @@ public class SelectionMenu extends JPanel {
                 JOptionPane.QUESTION_MESSAGE, null, strategies, strategies[0]);
     }
 
-    /**
-     * Starts the Omok game
-     * @param player1 represents the main user
-     * @param player2 represents an AI or a second user
-     * @param isAI represents i its a game against AI
-     */
-    private void startGame(Player player1, Player player2, boolean isAI) {
+
+    private void startGame(PlayerInterface player1, PlayerInterface player2, boolean isAI) {
         JFrame gameFrame = new JFrame("Omok Game");
         SwingUtilities.invokeLater(() -> {
             try {
                 BoardFrame board = new BoardFrame(player1, player2, isAI);
-                ImageIcon icon = new ImageIcon("images/icon.png");
+                ImageIcon icon = new ImageIcon("images/MainMenuPic.png");
                 gameFrame.setIconImage(icon.getImage());
                 gameFrame.setIconImage(icon.getImage());
                 gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

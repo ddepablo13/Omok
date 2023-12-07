@@ -1,12 +1,12 @@
 /**
- * Abstract that represents a basic player functionalities.
+ * Abstract of basic player.
  */
-public abstract class Player {
+public abstract class PlayerInterface {
     protected Stone stoneType;
     protected String name;
     protected int[] lastMove;
 
-    public Player(String name ,Stone stoneType) {
+    public PlayerInterface(String name , Stone stoneType) {
         this.stoneType = stoneType;
         this.name = name;
     }

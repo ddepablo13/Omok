@@ -1,7 +1,7 @@
 /**
  * Extends player and represents the behavior a Human Player.
  */
-public class HumanPlayer extends Player {
+public class HumanPlayer extends PlayerInterface {
     private int[] lastMove;
     protected String name;
 

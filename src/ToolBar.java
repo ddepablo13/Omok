@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class testToolBar {
+public class ToolBar {
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Toolbar with Icon");
@@ -11,20 +11,19 @@ public class testToolBar {
 
         JToolBar toolBar = new JToolBar("Toolbar");
 
-        // Define the base path and file names
         String basePath = "/GUIOmokGameConsole/assets/";
-        String[] fileNames = {"resetGame.png", "newGame.png", "changeUsernames.png", "quit.png"};
+        String[] fileNames = {"ResetGame.png", "NewGameIcon.png", "ChangeName.png", "LeaveGame.png"};
 
         for (String fileName : fileNames) {
-            URL iconURL = testToolBar.class.getResource(basePath + fileName);
+            URL iconURL = ToolBar.class.getResource(basePath + fileName);
             if (iconURL != null) {
                 ImageIcon icon = new ImageIcon(iconURL);
 
-                // Create a button with the icon
+                // Create a button
                 JButton button = new JButton(icon);
-                button.setFocusable(false); // Optional: to remove a focus border around the button
+                button.setFocusable(false);
 
-                // Add the button to the toolbar
+                // Add button
                 toolBar.add(button);
             } else {
                 System.out.println("Icon not found for: " + fileName);
