@@ -24,11 +24,11 @@ public class AIPlayer extends Player{
      */
 
     public AIPlayer(Stone stoneType, Board currentBoard, Player opponent) {
-        super("Gomok AI :3", stoneType);
+        super("Computer", stoneType);
         this.stoneType = stoneType;
         this.opponent = opponent;
         this.board = currentBoard;
-        this.me = new HumanPlayer(stoneType, "Gomok AI :3");
+        this.me = new HumanPlayer(stoneType, "Computer");
     }
 
     /**

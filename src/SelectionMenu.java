@@ -14,6 +14,7 @@ public class SelectionMenu extends JPanel {
 
     private JRadioButton humanButton;
     private JRadioButton computerButton;
+    private JRadioButton javaCbutton;
     private JTextField playerNameField;
     private JTextField opponentNameField;
     private final BufferedImage backgroundImage;
@@ -94,7 +95,7 @@ public class SelectionMenu extends JPanel {
      */
     private void initializeUI() {
         // Define a custom font
-        Font customFont = new Font("DialogInput", Font.PLAIN, 14);
+        Font customFont = new Font("DialogInput", Font.ROMAN_BASELINE, 14);
 
         this.setPreferredSize(new Dimension(450, 450));
         this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -111,15 +112,15 @@ public class SelectionMenu extends JPanel {
         // Set the custom font for each GUI component
         JLabel playerNameLabel = new JLabel("Your Name:");
         playerNameLabel.setFont(customFont);
-        playerNameField = new JTextField("Me", 10);
+        playerNameField = new JTextField("You", 10);
         playerNameField.setFont(customFont);
-        addFocusListenerToTextField(playerNameField, "Me");
+        addFocusListenerToTextField(playerNameField, "You");
 
-        JLabel opponentNameLabel = new JLabel("Opponent Name:");
+        JLabel opponentNameLabel = new JLabel("Their Name:");
         opponentNameLabel.setFont(customFont);
-        opponentNameField = new JTextField("Opponent", 10);
+        opponentNameField = new JTextField("Computer", 10);
         opponentNameField.setFont(customFont);
-        addFocusListenerToTextField(opponentNameField, "Opponent");
+        addFocusListenerToTextField(opponentNameField, "Computer");
         opponentNameField.setEnabled(false);
 
         JLabel label = new JLabel("Select opponent:");
@@ -130,17 +131,22 @@ public class SelectionMenu extends JPanel {
         humanButton.setFont(customFont);
         computerButton = new JRadioButton("Computer");
         computerButton.setFont(customFont);
-        humanButton.addActionListener(e -> opponentNameField.setEnabled(true));
+        javaCbutton = new JRadioButton("Java Client");
+        javaCbutton.setFont(customFont);
 
+        humanButton.addActionListener(e -> opponentNameField.setEnabled(true));
         computerButton.addActionListener(e -> opponentNameField.setEnabled(false));
+        javaCbutton.addActionListener(e -> opponentNameField.setEnabled(false));
 
         ButtonGroup group = new ButtonGroup();
         group.add(humanButton);
         group.add(computerButton);
+        group.add(javaCbutton);
 
         JPanel radioPanel = new JPanel(new FlowLayout());
-        radioPanel.add(humanButton);
         radioPanel.add(computerButton);
+        radioPanel.add(humanButton);
+        radioPanel.add(javaCbutton);
 
         this.add(playerNameLabel, gbc);
         this.add(playerNameField, gbc);
@@ -169,8 +175,8 @@ public class SelectionMenu extends JPanel {
         if (playerName.isEmpty()) {
             playerName = "Player 1";
         }
-        if (opponentName.isEmpty() || opponentName.equals("Opponent")) {
-            opponentName = isAI ? "Gomok AI" : "Player 2";
+        if (opponentName.isEmpty() || opponentName.equals("Computer")) {
+            opponentName = isAI ? "Computer" : "Player 2";
         }
 
         if (humanButton.isSelected() || computerButton.isSelected()) {
@@ -181,9 +187,24 @@ public class SelectionMenu extends JPanel {
             if (topFrame != null) {
                 topFrame.dispose();
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select an opponent!");
         }
+        if (javaCbutton.isSelected()) {
+            String strategy = selectJavaClientStrategy();
+            if (strategy != null) {
+                Player player1 = new HumanPlayer(Stone.BLACK, playerName);
+                JavaClientPlayer javaClientPlayer = new JavaClientPlayer(Stone.WHITE, strategy); // Assuming this class exists
+                startGame(player1, javaClientPlayer, false);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Select an option!");
+        }
+    }
+
+    private String selectJavaClientStrategy() {
+        String[] strategies = {"Smart", "Random"};
+        return (String) JOptionPane.showInputDialog(
+                this, "Select Strategy:", "Java Client Strategy",
+                JOptionPane.QUESTION_MESSAGE, null, strategies, strategies[0]);
     }
 
     /**
@@ -211,7 +232,7 @@ public class SelectionMenu extends JPanel {
                 }
 
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(gameFrame, "Failed to start the game due to an error.");
+                JOptionPane.showMessageDialog(gameFrame, "Failed to start due to an error.");
             }
         });
     }

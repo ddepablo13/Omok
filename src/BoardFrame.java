@@ -36,14 +36,13 @@ public class BoardFrame extends JPanel {
 
         // Define the base path and file names
         String basePath = "images/";
-        String[] fileNames = {"newGame.png", "changeUsernames.png", "quit.png", "connectServer.png"};
+        String[] fileNames = {"newGame.png", "changeUsernames.png", "quit.png"};
 
         // Actions corresponding to each toolbar button
         Runnable[] actions = {
                 () -> game.resetGame(),        // Action for newGame.png
                 this::changeUserNames,       // Action for changeUsernames.png
                 this::returnToSelectionMenu,  // Action for quit.png
-                this::warn
         };
 
         for (int i = 0; i < fileNames.length; i++) {
@@ -66,19 +65,14 @@ public class BoardFrame extends JPanel {
         }
     }
 
-    private void warn() {
-        JOptionPane.showConfirmDialog(this,
-                "This is test for running a server",
-                "Server connect?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-    }
 
     /**
      * Takes user back to the original selection menu.
      */
     private void returnToSelectionMenu() {
         int confirm = JOptionPane.showConfirmDialog(this,
-                "This will return you to the selection menu.\nDo you want to continue?",
-                "Return to Selection Menu", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                "Return to Main Menu?",
+                "Return to Main Menu", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -87,7 +81,7 @@ public class BoardFrame extends JPanel {
             }
             EventQueue.invokeLater(() -> {
                 try {
-                    JFrame selectionFrame = new JFrame("Selection Menu");
+                    JFrame selectionFrame = new JFrame("Main Menu");
                     selectionFrame.setSize(new Dimension(500, 600));
                     SelectionMenu selectionMenu = new SelectionMenu(selectionFrame.getWidth(), selectionFrame.getHeight());
                     selectionFrame.setContentPane(selectionMenu);
@@ -108,7 +102,7 @@ public class BoardFrame extends JPanel {
      */
     private void changeUserNames() {
         int confirm = JOptionPane.showConfirmDialog(this,
-                "This will change the names of the players.\nDo you want to continue?",
+                "Change Player Names?",
                 "Change Names", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {

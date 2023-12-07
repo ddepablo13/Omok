@@ -58,7 +58,7 @@ public class OmokGame extends JPanel {
 
                 if (board.isOccupied(col, row)) {
                     JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(OmokGame.this),
-                            "Position is already occupied. Please choose another.");
+                            "This spot is occupied.");
                 } else {
                     makeMove(col, row);
                     player1Panel.highlight(currentPlayer == player1);
@@ -103,17 +103,32 @@ public class OmokGame extends JPanel {
      * @param y represents the 'column' in the board
      */
     private void makeMove(int x, int y) {
-        board.placeStone(x, y, currentPlayer);
-        currentPlayer.setLastMove(new int[]{x, y});
-        if (currentPlayer == player1) {
-            player1Panel.moveMade(new int[]{x, y});
-        } else {
-            player2Panel.moveMade(new int[]{x, y});
+        if(currentPlayer instanceof JavaClientPlayer){
+            handleServerResponse(x, y, (JavaClientPlayer) currentPlayer);
+        }else {
+            board.placeStone(x, y, currentPlayer);
+            currentPlayer.setLastMove(new int[]{x, y});
+            if (currentPlayer == player1) {
+                player1Panel.moveMade(new int[]{x, y});
+            } else {
+                player2Panel.moveMade(new int[]{x, y});
+            }
+            detectWin();
+            if (!isGameOver && isAIGame && currentPlayer instanceof AIPlayer) {
+                SwingUtilities.invokeLater(this::aiMakeMove);
+            }
+        }
+    }
+    private void handleServerResponse(int x, int y, JavaClientPlayer javaClientPlayer) {
+        String query = String.format("play/?pid=gameID&x=%d&y=%d", x, y); // Replace 'gameID' with actual game ID
+        String response = javaClientPlayer.getClient().sendGet(query);
+        int[] serverMove = javaClientPlayer.parseMove(response);
+        if (serverMove != null) {
+            board.placeStone(serverMove[0], serverMove[1], javaClientPlayer);
+            javaClientPlayer.setLastMove(serverMove);
+            player2Panel.moveMade(serverMove);
         }
         detectWin();
-        if (!isGameOver && isAIGame && currentPlayer instanceof AIPlayer) {
-            SwingUtilities.invokeLater(this::aiMakeMove);
-        }
     }
 
     /**
@@ -173,7 +188,7 @@ public class OmokGame extends JPanel {
      */
     public void resetGame() {
         int confirm = JOptionPane.showConfirmDialog(this,
-                "This will reset the current game state.\nDo you want to continue?",
+                "Reset the game?",
                 "Reset Game", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
