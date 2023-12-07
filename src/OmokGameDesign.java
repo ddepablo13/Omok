@@ -13,6 +13,7 @@ public class OmokGameDesign extends JPanel {
     private final PlayerUpdates player1Panel;
     private final PlayerUpdates player2Panel;
 
+    // Constructor. Initializes the game panel, sets up the players and panels, and prepares the game board.
     public OmokGameDesign(PlayerUpdates player1Panel, PlayerInterface player1, PlayerUpdates player2Panel, PlayerInterface player2, boolean isAIGame) {
         this.isAIGame = isAIGame;
         actualBoard = new ActualBoard();
@@ -54,6 +55,7 @@ public class OmokGameDesign extends JPanel {
         });
     }
 
+    // Getters for the player update panels.
     public PlayerUpdates getPlayer1Panel() {
         return player1Panel;
     }
@@ -62,6 +64,7 @@ public class OmokGameDesign extends JPanel {
         return player2Panel;
     }
 
+    // Getters for the player interfaces.
     public PlayerInterface getPlayer1() {
         return player1;
     }
@@ -70,6 +73,7 @@ public class OmokGameDesign extends JPanel {
         return player2;
     }
 
+    // Handles making a move on the board, either by the current player or by the AI.
     private void makeMove(int x, int y) {
         if(currentPlayer instanceof JavaClientPlayer){
             handleServerResponse(x, y, (JavaClientPlayer) currentPlayer);
@@ -87,6 +91,8 @@ public class OmokGameDesign extends JPanel {
             }
         }
     }
+
+    // Processes the response from the server for a Java client player's move.
     private void handleServerResponse(int x, int y, JavaClientPlayer javaClientPlayer) {
         // Replace 'gameID' with actual game ID from javaClientPlayer
         String gameID = javaClientPlayer.getGameID();
@@ -109,6 +115,7 @@ public class OmokGameDesign extends JPanel {
         }
     }
 
+    // Checks if the current player has won or if the game is a draw, and handles the end of the game.
     private void detectWin() {
         if (actualBoard.isWonBy(currentPlayer)) {
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(this),
@@ -126,6 +133,7 @@ public class OmokGameDesign extends JPanel {
         player2Panel.highlight(currentPlayer == player2);
     }
 
+    // Handles making a move for the AI player.
     private void aiMakeMove() {
         int[] aiMove = ((ComputerPlayer) currentPlayer).bestMove();
         if (aiMove != null) {
@@ -136,16 +144,14 @@ public class OmokGameDesign extends JPanel {
         }
     }
 
-    public void changeUserNames(String name1, String name2){
-        this.player1.name = name1;
-        this.player2.name = name2;
-    }
-
+    // Switches the current player after a move.
     private void switchPlayer() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
         player1Panel.highlight(currentPlayer == player1);
         player2Panel.highlight(currentPlayer == player2);
     }
+
+    // Resets the game to its initial state.
     public void resetGame() {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Reset the game?",
@@ -160,9 +166,5 @@ public class OmokGameDesign extends JPanel {
             isGameOver = false;
             actualBoard.repaint();
         }
-    }
-
-    public int[] getLastMove(){
-        return new int[]{actualBoard.getLastMoveX(), actualBoard.getLastMoveY()};
     }
 }

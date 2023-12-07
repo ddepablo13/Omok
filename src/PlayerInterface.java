@@ -10,7 +10,6 @@ public abstract class PlayerInterface {
         this.stoneType = stoneType;
         this.name = name;
     }
-    public abstract int[] makeMove(Stone[][] board);
 
     public Stone getStoneType() {
         return stoneType;

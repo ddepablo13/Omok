@@ -412,28 +412,6 @@ public class ComputerPlayer extends PlayerInterface {
     }
 
     /**
-     * Determines and makes the next move for the AI player on the provided game board.
-     * This method overrides the corresponding method in the superclass and uses the {@code decideNextMove}
-     * method to determine the best move. If a valid move is found, it places a stone for the AI player
-     * at the determined coordinates on the board.
-     *
-     * @param currentBoard the current state of the game board represented as a 2D array of {@code Stone} objects.
-     * @return an integer array containing the coordinates [x, y] of the move made by the AI player.
-     *         Returns null if no valid move is found or possible.
-     */
-    @Override
-    public int[] makeMove(Stone[][] currentBoard) {
-
-        ActualBoard.Place bestMove = decideNextMove();
-        if (bestMove != null) {
-            actualBoard.placeStone(bestMove.x, bestMove.y, this);
-
-            return new int[]{bestMove.x, bestMove.y};
-        }
-        return null;
-    }
-
-    /**
      * Determines the next move for the AI player by finding the first empty position on the game board.
      * This method iterates through each position of the board in a sequential manner, checking for
      * the first available (empty) spot. Once found, it returns this position as the next move.

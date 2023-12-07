@@ -25,17 +25,6 @@ public class HumanPlayer extends PlayerInterface {
     }
 
     /**
-     * Makes a move
-     * @param board representing the current board
-     * @return array representing human move
-     */
-
-    @Override
-    public int[] makeMove(Stone[][] board) {
-        return new int[0];
-    }
-
-    /**
      * Sets last move of the human player
      * @param lastMove to set up the lastMove
      */

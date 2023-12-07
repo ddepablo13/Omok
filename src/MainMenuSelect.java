@@ -6,7 +6,7 @@ import java.awt.event.FocusEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
+// Constructor. Initializes the main menu with background and icon images, and sets up the UI components.
 public class MainMenuSelect extends JPanel {
 
     private JRadioButton humanButton;
@@ -35,6 +35,7 @@ public class MainMenuSelect extends JPanel {
         }
     }
 
+// Creates a circular image from the given BufferedImage.
     public BufferedImage createCircularImage(BufferedImage inputImage) {
         int diameter = Math.min(inputImage.getWidth(), inputImage.getHeight());
         BufferedImage circleBuffer = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
@@ -48,6 +49,7 @@ public class MainMenuSelect extends JPanel {
         return circleBuffer;
     }
 
+    // Adds a focus listener to a JTextField to handle placeholder text behavior.
     private void addFocusListenerToTextField(JTextField textField, String defaultText) {
         textField.addFocusListener(new FocusAdapter() {
             @Override
@@ -66,6 +68,7 @@ public class MainMenuSelect extends JPanel {
         });
     }
 
+    // Initializes the user interface components of the MainMenuSelect panel.
     private void initializeUI() {
         // Define a custom font
         Font customFont = new Font("DialogInput", Font.ROMAN_BASELINE, 14);
@@ -135,7 +138,10 @@ public class MainMenuSelect extends JPanel {
         this.add(playButton, gbc);
     }
 
-
+    /**
+     * Handles the action performed when the play button is clicked.
+     * It sets up the game based on the selected options and starts a new game frame.
+     */
     private void playButtonActionPerformed(ActionEvent e) {
         String playerName = playerNameField.getText().trim();
         String opponentName = opponentNameField.getText().trim();
@@ -169,6 +175,7 @@ public class MainMenuSelect extends JPanel {
         }
     }
 
+    // Prompts the user to select a strategy for the Java client player.
     private String selectJavaClientStrategy() {
         String[] strategies = {"Smart", "Random"};
         return (String) JOptionPane.showInputDialog(
@@ -176,7 +183,9 @@ public class MainMenuSelect extends JPanel {
                 JOptionPane.QUESTION_MESSAGE, null, strategies, strategies[0]);
     }
 
-
+    /**
+    * Starts a new game with the provided player interfaces and configuration.
+    */
     private void startGame(PlayerInterface player1, PlayerInterface player2, boolean isAI) {
         JFrame gameFrame = new JFrame("Omok Game");
         SwingUtilities.invokeLater(() -> {
