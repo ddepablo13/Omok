@@ -345,6 +345,16 @@ public class Board extends JPanel {
         return grid;
     }
 
+    public Stone[][] getStoneGrid() {
+        Stone[][] stoneGrid = new Stone[BOARD_SIZE][BOARD_SIZE];
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                stoneGrid[i][j] = grid[i][j] != null ? grid[i][j].getStoneType() : null;
+            }
+        }
+        return stoneGrid;
+    }
+
     /**
      * An intersection on an Omok board identified by its 0-based column
      * index (x) and row index (y). The indices determine the position

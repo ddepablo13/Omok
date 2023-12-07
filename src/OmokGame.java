@@ -121,17 +121,21 @@ public class OmokGame extends JPanel {
     }
     private void handleServerResponse(int x, int y, JavaClientPlayer javaClientPlayer) {
         // Replace 'gameID' with actual game ID from javaClientPlayer
-        String gameID = javaClientPlayer.getGameID(); // Assuming getGameID() method exists
+        String gameID = javaClientPlayer.getGameID();
         String query = String.format("play/?pid=%s&x=%d&y=%d", gameID, x, y);
 
         String response = javaClientPlayer.getClient().sendGet(query);
         int[] serverMove = javaClientPlayer.parseMove(response);
 
         if (serverMove != null) {
-            board.placeStone(serverMove[0], serverMove[1], javaClientPlayer);
-            javaClientPlayer.setLastMove(serverMove);
-            player2Panel.moveMade(serverMove);
-            detectWin();
+            if(!board.isOccupied(serverMove[0], serverMove[1])) {
+                board.placeStone(serverMove[0], serverMove[1], javaClientPlayer);
+                javaClientPlayer.setLastMove(serverMove);
+                player2Panel.moveMade(serverMove);
+                detectWin();
+            }else{
+                System.out.println("Server tried to place a stone on occupied spot: [" + serverMove[0] + ", " + serverMove[1] + "]");
+            }
         } else {
             System.err.println("Error handling server response"); // Error logging
         }

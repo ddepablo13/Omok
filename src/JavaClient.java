@@ -1,3 +1,6 @@
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,12 +9,26 @@ import java.net.URL;
 
 public class JavaClient {
 
+    static {
+        trustAllCertificates();
+    }
+
+    private static void trustAllCertificates() {
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[]{new NaiveTrustManager()}, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
-     * Retrieve the document at the specified URL by sending a GET request; 
+     * Retrieve the document at the specified URL by sending a GET request;
      * return null if the request/connection fails.
      */
     public String sendGet(String path) {
-        String schemeAndAuthority = "http://omok.atwebpages.com/"; // Schem and Authority never change
+        String schemeAndAuthority = "https://www.cs.utep.edu/cheon/cs3360/project/omok/"; // Scheme and Authority
         HttpURLConnection con = null;
         try {
             URL url = new URL(schemeAndAuthority + path);
