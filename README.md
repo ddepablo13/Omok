@@ -1,4 +1,3 @@
 This project was worked on during my Fall '23 semester. 
-We were provided an MSP430 board with a custom LCD screen. 
-Professor included a library of functions in C.
-This helped display my code on the LCD screen; my code was a original recreation of the original game of "Pong".
+Although my Professor included a type of library of methods called "Paint" that helped us display things in Java, I used Java's library to challenge myself and display it in my own code.
+This was a fun and good experience to explore more of Java's library and help understand the topics of Object Oriented Programming.
